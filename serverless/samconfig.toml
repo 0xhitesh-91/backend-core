@@ -19,3 +19,13 @@ region = "ap-south-1"
 confirm_changeset = true
 capabilities = ["CAPABILITY_IAM","CAPABILITY_AUTO_EXPAND"]
 image_repositories = []
+
+[qaLocal]
+[qaLocal.deploy]
+[qaLocal.deploy.parameters]
+s3_bucket = "mvp-bucket"
+s3_prefix = "mvp-lite-qa"
+region = "ap-south-1"
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM","CAPABILITY_AUTO_EXPAND"]
+image_repositories = []

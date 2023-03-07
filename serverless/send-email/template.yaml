@@ -5,7 +5,12 @@
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  send-email
+  send-email-qa
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+  - AWS::Serverless-2016-10-31
 
 Parameters:
   AllSubnets:
@@ -19,42 +24,31 @@ Parameters:
   EmailQueueArn:
     Type: String
 
-# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
-Transform:
-  - AWS::Serverless-2016-10-31
-
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:
+  # CommonLayer:
+  #   Type: AWS::Serverless::LayerVersion
+  #   Properties:
+  #     LayerName: CommonLayer
+  #     Description: Dependencies for the blank sample app.
+  #     ContentUri: ../layers/nodejs/
+  #     CompatibleRuntimes:
+  #       - nodejs18.x
+  #   Metadata:
+  #     BuildMethod: nodejs18.x
   # This is an SQS queue with all default configuration properties. To learn more about the available options, see
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html
-
-  CommonLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName: CommonLayer
-      Description: Dependencies for the blank sample app.
-      ContentUri: ../layers/nodejs/
-      CompatibleRuntimes:
-        - nodejs18.x
-    Metadata:
-      BuildMethod: nodejs18.x
-
-  # This is the Lambda function definition associated with the source code: sqs-payload-logger.js. For all available properties, see
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   SendEmail:
     Type: AWS::Serverless::Function
     Properties:
       Description: A Lambda function that logs the payload of messages sent to an associated SQS queue.
-      Runtime: nodejs18.x
+      Runtime: nodejs16.x
       Architectures:
         - x86_64
       Handler: src/handlers/sqs-payload-logger.sqsPayloadLoggerHandler
-      Layers:
-        - !Ref CommonLayer
-      # This property associates this Lambda function with the SQS queue defined above, so that whenever the queue
-      # receives a message, the Lambda function is invoked
+      # Layers:
+      #   - !Ref CommonLayer
       Events:
         SQSQueueEvent:
           Type: SQS
@@ -62,12 +56,13 @@ Resources:
             Queue: !Ref EmailQueueArn
       MemorySize: 128
       Timeout: 25 # Chosen to be less than the default SQS Visibility Timeout of 30 seconds
-      Policies:
-        # Give Lambda basic execution Permission to the helloFromLambda
-        - AWSLambdaBasicExecutionRole
-      VpcConfig:
-        SecurityGroupIds: !Ref SecurityGroupIds
-        SubnetIds: !Ref AllSubnets
+      # Policies:
+      #   - AWSLambdaBasicExecutionRole
+      # - AmazonRDSDataFullAccess
+      # - AWSLambdaVPCAccessExecutionRole
+      # VpcConfig:
+      #   SecurityGroupIds: !Ref SecurityGroupIds
+      #   SubnetIds: !Ref AllSubnets
       Tags:
         ProjectName: !Ref ProjectName
         Environment: !Ref Environment

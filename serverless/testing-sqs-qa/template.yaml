@@ -1,7 +1,14 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  send-sms-qa-lambda
+  testing-sqs-qa
 
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
 Transform:
   - AWS::Serverless-2016-10-31
 
@@ -9,7 +16,7 @@ Parameters:
   AllSubnets:
     Type: List<AWS::EC2::Subnet::Id>
   SecurityGroupId:
-    Type: AWS::EC2::SecurityGroup::Id
+    Type: List<AWS::EC2::SecurityGroup::Id>
   Environment:
     Type: String
   ProjectName:
@@ -17,9 +24,11 @@ Parameters:
   SMSQueueArn:
     Type: String
 
-# Conditions:
-#   AddVpcConfig: !Not [ !Equals [ !Ref Environment, "qaLocal" ] ]
+Conditions:
+  AddVpcConfig: !Not [ !Equals [ !Ref Environment, "qaLocal" ] ]
 
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:
   # CommonLayer:
   #   Type: AWS::Serverless::LayerVersion
@@ -31,7 +40,8 @@ Resources:
   #       - nodejs18.x
   #   Metadata:
   #     BuildMethod: nodejs18.x
-  
+  # This is an SQS queue with all default configuration properties. To learn more about the available options, see
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html
   SendSMS:
     Type: AWS::Serverless::Function
     Properties:
@@ -52,15 +62,12 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
       VpcConfig:
-        # SecurityGroupIds: !Ref SecurityGroupId
-        # SubnetIds: !Ref AllSubnets
         SecurityGroupIds:
-          - !Ref SecurityGroupId
-          # - !If [AddVpcConfig, !Ref SecurityGroupId, !Ref "AWS::NoValue"]
-        SubnetIds:
-          - !Ref AllSubnets
-          # - !If [AddVpcConfig, !Ref AllSubnets, !Ref "AWS::NoValue"]
+          - !If [AddVpcConfig, !Ref SecurityGroupId, !Ref "AWS::NoValue"]
+        SubnetIds: 
+          - !If [AddVpcConfig, !Ref AllSubnets, !Ref "AWS::NoValue"]
   
       Tags:
         ProjectName: !Ref ProjectName
         Environment: !Ref Environment
+  

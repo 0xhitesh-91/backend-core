@@ -3,11 +3,11 @@
     "parameters": [
         {
             "ParameterKey": "AllSubnets",
-            "ParameterValue": "subnet-0d94d83549cf80c47,subnet-0d2a22a71710348d0"
+            "ParameterValue": "subnet-68ae4074,subnet-e3ff23d5"
         },
         {
             "ParameterKey": "SecurityGroupId",
-            "ParameterValue": "sg-0bfc710b1820e67b3"
+            "ParameterValue": "sg-d8eb037a37a60ab14"
         },
         {
             "ParameterKey": "ProjectName",
@@ -19,7 +19,7 @@
         },
         {
             "ParameterKey": "SMSQueueArn",
-            "ParameterValue": "arn:aws:sqs:ap-south-1:870138300653:SendSMSQueue-qa"
+            "ParameterValue": "arn:aws:sqs:ap-south-1:000000000000:SendSMSQueue-qa"
         }
     ]
 }

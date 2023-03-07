@@ -1,0 +1,25 @@
+{
+    "stack_name": "send-email-qa",
+    "parameters": [
+        {
+            "ParameterKey": "AllSubnets",
+            "ParameterValue": "subnet-22ffad2b,subnet-eadedabc"
+        },
+        {
+            "ParameterKey": "SecurityGroupIds",
+            "ParameterValue": "sg-97e0ae1fc177aa90d"
+        },
+        {
+            "ParameterKey": "ProjectName",
+            "ParameterValue": "mvp-lite-v2"
+        },
+        {
+            "ParameterKey": "Environment",
+            "ParameterValue": "qa"
+        },
+        {
+            "ParameterKey": "EmailQueueArn",
+            "ParameterValue": "arn:aws:sqs:ap-south-1:000000000000:SendEmailQueue-qa"
+        }
+    ]
+}
